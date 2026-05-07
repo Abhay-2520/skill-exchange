@@ -21,16 +21,28 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const allowedOrigins = clientUrl
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy does not allow access from origin ${origin}`));
+    }
+  },
+  credentials: true
+};
 
 const io = new Server(server, {
-  cors: {
-    origin: clientUrl,
-    credentials: true
-  }
+  cors: corsOptions
 });
 
 app.use(helmet());
-app.use(cors({ origin: clientUrl, credentials: true }));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 app.use(mongoSanitize());
 app.use(morgan("dev"));
