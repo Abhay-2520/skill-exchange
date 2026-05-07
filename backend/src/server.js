@@ -20,7 +20,7 @@ connectDB();
 
 const app = express();
 const server = http.createServer(app);
-const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const clientUrl = process.env.CLIENT_URL || "http://localhost:5173,https://skill-exchange-frontend1.onrender.com";
 const allowedOrigins = clientUrl
   .split(",")
   .map((origin) => origin.trim())
